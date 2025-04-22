@@ -1,7 +1,6 @@
 import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
-from ..utils.loss import cal_loss_batch
 
 
 class GPTDatasetv1(Dataset):
@@ -44,29 +43,6 @@ def create_dataloader_v1(txt, batch_size = 4, max_length = 256, stride = 128, sh
     )
 
     return dataloader
-
-
-def cal_loss_loader(data_loader, model, device, num_batches = None):
-    total_loss = 0
-    
-    if len(data_loader) == 0:
-        return float("nan")
-    elif num_batches is None:
-        # iterative over all batches if no fixed num_batches is specified
-        num_batches = len(data_loader)
-    else:
-        # reduce the number of batches to match the total number of batches in the data loader if num_batches exceeds the number of batches in the data loader
-        num_batches = min(num_batches, len(data_loader))
-    for i, (input_batch, target_batch) in enumerate(data_loader):
-        if i < num_batches:
-            loss = cal_loss_batch(input_batch, target_batch, model, device)
-            # sum loss for each batch 
-            total_loss += loss.item()
-        else:
-            break
-
-    # average the loss over all batches
-    return total_loss / num_batches
 
 
 def cal_acc_loader(data_loader, model, device, num_batches = None):
