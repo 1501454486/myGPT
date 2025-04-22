@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from myGPT import dataloader
-from myGPT.generate import generate_text_simple, text_to_token_ids, token_ids_to_text
+from myGPT.generate import generate_text_simple, text_to_token_ids, token_ids_to_text, generate_and_print_sample
 from .utils.loss import cal_loss_batch
 from .dataloader.dataset import cal_loss_loader
 
@@ -89,20 +89,3 @@ def evaluate_model(model, train_loader, val_loader, device, eval_iter):
         )
     model.train()
     return train_loss, val_loss
-
-
-def generate_and_print_sample(model, tokenizer, device, start_context):
-    model.eval()
-    context_size = model.pos_emb.weight.shape[0]
-    encoded = text_to_token_ids(start_context, tokenizer).to(device)
-    with torch.no_grad():
-        token_ids = generate_text_simple(
-            model = model,
-            idx = encoded,
-            max_new_tokens = 50,
-            context_size = context_size
-        )
-        decoded_text = token_ids_to_text(token_ids, tokenizer)
-        print(decoded_text.replace("\n", " "))
-
-    model.train()
