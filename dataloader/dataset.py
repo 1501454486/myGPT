@@ -1,8 +1,8 @@
 import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
-from utils.format import format_input
-from utils.format import format_output
+from ..utils.format import format_input
+from ..utils.format import format_output
 
 
 class GPTDatasetv1(Dataset):
