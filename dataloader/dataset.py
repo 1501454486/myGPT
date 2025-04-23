@@ -106,3 +106,26 @@ class InstructionDataset(Dataset):
     
     def __len__(self):
         return len(self.data)
+
+
+
+
+def custom_collate_draft_2(batch, pad_token_id = 50256, device = "cpu"):
+    batch_max_length = max(len(item) + 1 for item in batch)
+    inputs_list, targets_list = [], []
+
+    for item in batch:
+        new_item = item.copy()
+        new_item += [pad_token_id]
+
+        padded = new_item + [pad_token_id] * (batch_max_length - len(new_item))
+
+        inputs = torch.tensor(padded[:-1])
+        targets = torch.tensor(padded[1:])
+
+        inputs_list.append(inputs)
+        targets_list.append(targets)
+
+    inputs_tensor = torch.stack(inputs_list).to(device)
+    targets_tensor = torch.stack(targets_list).to(device)
+    return inputs_tensor, targets_tensor
