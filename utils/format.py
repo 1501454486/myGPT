@@ -11,6 +11,13 @@ def format_input(entry):
     return instruction_text + input_text
 
 
+def format_output(entry):
+    response_text = (
+        f"\n\n### Response:\n{entry['output']}"
+    )
+    return response_text
+
+
 def custom_collate_draft_1(batch, pad_token_id = 50256, device = "cpu"):
     batch_max_length = max(len(item) + 1 for item in batch)
     inputs_list = []

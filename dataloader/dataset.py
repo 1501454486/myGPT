@@ -2,6 +2,7 @@ import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
 from utils.format import format_input
+from utils.format import format_output
 
 
 class GPTDatasetv1(Dataset):
@@ -92,8 +93,8 @@ class InstructionDataset(Dataset):
         self.encoded_texts = []
 
         for entry in data:
-            instruction_plus_input = format_input(data)
-            response_text = f"\n\n### Response:\n{entry['output']}"
+            instruction_plus_input = format_input(entry)
+            response_text = format_output(entry)
             full_text = instruction_plus_input + response_text
 
             self.encoded_texts.append(
