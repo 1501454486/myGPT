@@ -1,6 +1,7 @@
 import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
+from utils.format import format_input
 
 
 class GPTDatasetv1(Dataset):
@@ -81,3 +82,26 @@ def cal_acc_loader(data_loader, model, device, num_batches = None):
             break
     
     return correct_predictions / num_examples
+
+
+
+
+class InstructionDataset(Dataset):
+    def __init__(self, data, tokenizer):
+        self.data = data
+        self.encoded_texts = []
+
+        for entry in data:
+            instruction_plus_input = format_input(data)
+            response_text = f"\n\n### Response:\n{entry['output']}"
+            full_text = instruction_plus_input + response_text
+
+            self.encoded_texts.append(
+                tokenizer.encode(full_text)
+            )
+
+    def __getitem__(self, index):
+        return self.encoded_texts[index]
+    
+    def __len__(self):
+        return len(self.data)
